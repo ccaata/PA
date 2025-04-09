@@ -1,186 +1,152 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <chrono>
+#include <math.h>
 
 using namespace std;
-void mergeSort (int* a, int p, int q, int *temp, int &n1);
-void interclasare (int* a, int p, int q, int m, int *temp, int &n1);
 
-void Print (int *a, int n);
+void quickSort1(int a[], int p, int q);
+void partitioneaza(int a[], int p, int q, int &k);
+void mergeSort(int a[],int p, int q);
+void interclasare(int a[], int p,int q, int m, int temp[]);
 
-void QuickSort1 (int* a, int p, int q, int &n2);
-void QuickSort2 (int* a, int p, int q, int &n2);
-
-void Partition (int* a, int p, int q, int &k, int &n2);
-void mergeSort (int* a, int p, int q, int *temp, int &n2)
+int main()
 {
-    if (p < q)
+    int v[10000], p = 0, q = 10000;
+    
+    //  generez numerele random
+    for(int i=p;i<=q;++i)
     {
-        int m = (p + q) / 2;
-        mergeSort (a, p, m, temp, n2);
-        mergeSort (a, m + 1, q, temp, n2);
-        interclasare (a, p, q, m, temp, n2);
-        for (int i = p; i <= q; ++i)
-            a[i] = temp [i - p];
+        v[i] = rand() %10000;
+    }
+  
+    // START TIMER
+    auto start = std::chrono::high_resolution_clock::now();
+
+    quickSort1(v,p,q);
+    
+    // STOP TIMER
+    auto end = std::chrono::high_resolution_clock::now();    
+    auto duration = (end - start);    
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(duration); // Microsecond (as int)    
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration); // Milliseconds (as int)    
+    const float ms_fractional = static_cast<float>(us.count()) / 1000;         // Milliseconds (as float)    
+    std::cout << "Duration = " << us.count() << "µs (" << ms_fractional << "ms)" << std::endl<<std::endl;
+    
+    // cout<<" Vectorul sortat: ";
+    // for(int i=p;i<=q;++i)
+    //     cout<<v[i]<<" ";
+    // cout<<endl<<endl;
+
+    int v2[10000], p2 = 0, q2 = 10000;
+    
+    //  generez numerele random
+    for(int i = p2; i <= q2; ++i)
+    {
+        v2[i] = rand() % 10000;
+    }
+  
+    // START TIMER
+    auto start2 = std::chrono::high_resolution_clock::now();
+
+    mergeSort(v2, p2, q2);
+    
+    // STOP TIMER
+    auto end2 = std::chrono::high_resolution_clock::now();    
+    auto duration2 = (end2 - start2);    
+    auto us2 = std::chrono::duration_cast<std::chrono::microseconds>(duration2); // Microsecond (as int)    
+    auto ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(duration2); // Milliseconds (as int)    
+    const float ms_fractional2 = static_cast<float>(us2.count()) / 1000;         // Milliseconds (as float)    
+    std::cout << "Duration = " << us2.count() << "µs (" << ms_fractional2 << "ms)" << std::endl << std::endl;
+    
+    // cout << " Vectorul sortat: ";
+    // for(int i = p2; i <= q2; ++i)
+    //     cout << v2[i] << " ";
+    // cout << endl << endl;
+
+    return 0;
+}
+
+void quickSort1(int a[], int p, int q)
+{
+    if(p<q)
+    {
+        int k;
+        partitioneaza(a,p,q,k);
+        quickSort1(a,p,k-1);
+        quickSort1(a,k+1,q);
     }
 }
-void interclasare (int* a, int p, int q, int m, int *temp, int &n2)
+
+void partitioneaza(int a[], int p, int q, int &k)
 {
-    int i = p;
-    int j = m + 1;
-    int k = -1;
-    while ((i <= m) && (j <= q))
+    int x=a[p];
+    int i=p+1;
+    int j=q;
+
+    while(i<=j)
     {
-        k = k + 1;
-        if (a[i] <= a[j])
+        if(a[i]<=x) ++i;
+        if(a[j]>=x) --j;
+        if(i<j)
+        {
+            if( (a[i]>x) && (x>a[j]) )
+            {
+                swap(a[i],a[j]);
+                ++i;
+                --j;
+            }
+        }
+    }
+    k=i-1;
+    a[p]=a[k];
+    a[k]=x;
+}
+
+void mergeSort(int a[],int p, int q)
+{
+    if(p<q)
+    {
+        int m = ceil((p+q)/2);
+        mergeSort(a,p,m);
+        mergeSort(a,m+1,q);
+        int temp[10000]={0};
+        interclasare(a,p,q,m,temp);
+        for(int i=p;i<=q;++i)
+        {
+            a[i] = temp[i-p];
+        }
+    }
+}
+
+void interclasare(int a[], int p,int q, int m, int temp[])
+{
+    int i=p, j=m+1, k=-1;
+
+    while((i<=m) && (j<=q))
+    {
+        k = k+1;
+        if( a[i] <= a[j] )
         {
             temp[k] = a[i];
-            i++;
-            n2++;
+            ++i;
         }
         else
         {
             temp[k] = a[j];
-            j++;
+            ++j;
         }
     }
-    while (i <= m)
+
+    while(i<=m)
     {
-        k++;
+        ++k;
         temp[k] = a[i];
-        i++;
+        ++i;
     }
-    while (j <= q)
+    while(j<=q)
     {
-        k++;
+        ++k;
         temp[k] = a[j];
-        j++;
+        ++j;
     }
-}
-
-void Print (int *a, int n)
-{
-    cout << "\nVectorul este: ";
-    for (int i = 0; i < n; ++i)
-        cout << a[i] << ' ';
-    cout << "\n";
-}
-
-
-void QuickSort1 (int* a, int p, int q, int &n)
-{
-    if (p < q)
-    {   
-        int k;
-        Partition (a, p, q, k, n);
-        QuickSort1 (a, p, k - 1, n);
-        QuickSort1 (a, k + 1, q, n);
-    }
-}
-void QuickSort2 (int* a, int p, int q, int &n)
-{
-    while (p < q)
-    {
-        int k;
-        Partition (a, p, q, k, n);
-        if (k - p > q - k)
-        {
-            QuickSort2 (a, k + 1, q, n);
-            q = k - 1;
-        }
-        else
-        {
-            QuickSort2 (a, p, k - 1, n);
-            p = k + 1;
-        }
-    }
-}
-
-void Partition (int* a, int p, int q, int &k, int &n)
-{
-    int x = a[p];
-    int i = p + 1;
-    int j = q;
-    while (i <= j)
-    {
-        if (a[i] <= x)
-            i++, n++;
-        if (a[j] >= x)
-            j--, n++;
-        if (i < j)
-        {
-            if ((a[i] > x) && (x > a[j]))
-                {
-                    a[i] = a[i] ^ a[j];
-                    a[j] = a[j] ^ a[i];
-                    a[i] = a[i] ^ a[j];
-                    i++;
-                    j--;
-                    n += 2;
-                }
-        }
-    }
-    k = i - 1;
-    a[p] = a[k];
-    a[k] = x;
-}
-
-int main()
-{
-    int* a, *b, *c, *temp;
-    int n, n1 = 0, n2 = 0, n3 = 0;
-    cout << "Enter vector size: ";
-    cin >> n;
-    a = new int[n];
-    b = new int[n];
-    c = new int[n];
-    temp = new int[n];
-
-    srand(time(NULL));
-    cout << "Vectorul generat aleator: ";
-    for (int i = 0; i < n; ++i) {
-        a[i] = rand() % 100;
-        b[i] = a[i];
-        c[i] = a[i];
-        cout << a[i] << " ";
-    }
-    cout << "\n";
-
-    mergeSort (a, 0, n - 1, temp, n1);
-    QuickSort1 (b, 0, n - 1, n2);
-    QuickSort2 (c, 0, n - 1, n3);
-
-
-    cout << "\nMergeSort:\n";
-    Print (a, n);
-    cout << "n = " << n1 << '\n';
-
-    cout << "\nQuickSort1\n";
-    Print (b, n);
-    cout << "n = " << n2 << '\n';
-
-    cout << "\nQuickSort2\n";
-    Print (c, n);
-    cout << "n = " << n3 << '\n';
-    
-    int test[10000], temp2[10000];
-    for (int i = 0; i < 10000; i++)
-        test[i] = i;
-
-    n1 = 0;
-    QuickSort1 (test, 0, 10000 - 1, n1);
-    cout << "\nPentru cazul cu 10000 de elemente crescatoare ( QuickSort) \n";
-    cout << "n = " << n1;
-    cout << "\n";
-
-    n1 = 0;
-    mergeSort (test, 0, 10000 - 1, temp2, n1);
-    cout << "Pentru cazul cu 10000 de elemente crescatoare ( MergeSort) \n";
-    cout << "n = " << n1;
-    cout << "\n";
-    delete[] a;
-    delete[] b;
-    delete[] c;
-    delete[] temp;
-    return 0;
 }
