@@ -12,7 +12,7 @@ float greedy_backpack(int w[], float p[], int n, int M, float x[]) {
     for (int i = 0; i < n; i++) {
         prof_weight[i] = p[i] / w[i];
     }
-    // order sort: vector cu indexuri sortate în funcție de prof_weight în ordine descrescătoare
+    //vector cu indexuri sortate în funcție de prof_weight în ordine descrescătoare
     vector<int> order_sort(n);
     for (int i = 0; i < n; ++i) {
         order_sort[i] = i;
