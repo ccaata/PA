@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <chrono>
 using namespace std;
 float greedy_backpack(int w[], float p[], int n, int M, float x[]) {
     float max_profit = 0; 
@@ -48,9 +49,25 @@ int main(){
     int n = 6;              
     int M = 70;              
     float x[n];             
-    
+    //Start the greedy backpack algorithm timer
+    auto start = std::chrono::high_resolution_clock::now();
     float maxProfit = greedy_backpack(w, p, n, M, x);
-    
+    //Stop the greedy backpack algorithm timer
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = (end - start);
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(duration); // Microsecond (as int)
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration); // Milliseconds (as int)
+    const float ms_fractional = static_cast<float>(us.count()) / 1000; // Milliseconds (as float)
+    cout <<"\033[31m"<< "Timpul de executie = " << us.count() << "µs (" << ms_fractional << "ms)" <<"\033[0m"<< endl;
+    cout<<"\033[32m";
+    cout<<"==========================================================================================\n";
+    cout<<"\033[0m";
+    //Display the results
+    cout << "Greutatea maxima a rucsacului: " << M << endl;
+    cout << "Greutatile obiectelor: ";
+    for (int i = 0; i < n; ++i) {
+        cout << w[i] << " ";
+    }
     cout << "Obiectele selectate : ";
     for (int i = 0; i < n; i++) {
         cout << x[i] << " ";

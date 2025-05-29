@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
 
@@ -103,31 +104,64 @@ void rucsac(int M, int n, const vector<int>& w, const vector<int>& p, vector<int
     }
 }
 
-// Exemplu de main pentru testare
 int main() {
-    int M, n;
-    cout << "Introduceti capacitatea rucsacului (M): ";
-    cin >> M;
-    cout << "Introduceti numarul de obiecte (n): ";
-    cin >> n;
-
-    vector<int> w(n), p(n), x(n);
-    cout << "Introduceti greutatile obiectelor: ";
+    cout<<"\033[32m"; 
+    cout<<"==========================================================================================\n";
+    cout<<"\033[31m"<<" Backpack problem Interclasare grafice\n"<<"\033[0m";
+    int M = 15;
+    vector<int> w = {2, 5, 8, 3, 7};
+    vector<int> p = {10, 20, 30, 40, 50};
+    int n = w.size();
+    vector<int> x(n);
+    cout << "Greutatea maxima a rucsacului: " << M << "\n";
+    cout << "Greutatile obiectelor: ";
     for (int i = 0; i < n; ++i) {
-        cin >> w[i];
+        cout << w[i] << " ";
     }
-
-    cout << "Introduceti valorile obiectelor: ";
+    cout << "\nProfiturile obiectelor: ";
     for (int i = 0; i < n; ++i) {
-        cin >> p[i];
+        cout << p[i] << " ";
     }
-
+    cout << "\nNumarul de obiecte: " << n << "\n";
+// START TIMER
+   auto start = std::chrono::high_resolution_clock::now();
     rucsac(M, n, w, p, x);
+ // STOP TIMER
+    auto end = std::chrono::high_resolution_clock::now();    
+    auto duration = (end - start);    
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(duration); // Microsecond (as int)    
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration); // Milliseconds (as int)    
+    const float ms_fractional = static_cast<float>(us.count()) / 1000;         // Milliseconds (as float)    
+   //Afisare timp de executie
+    cout<<"\033[32m";
+    cout<<"==========================================================================================\n";
+    cout <<"\033[31m"<< "Timpul de executie al algoritmului este: " << ms_fractional << " ms\n";
+    cout<<"\033[0m";
 
     cout << "Solutia optima este: \n";
     for (int i = 0; i < n; ++i) {
         cout << "Obiectul " << i + 1 << ": " << (x[i] ? "Ales" : "Neales") << "\n";
     }
+cout<<"\033[32m"; 
+    cout<<"==========================================================================================\n"<<"\033[0m";
+    cout << "Greutatea totala: ";
+    int totalWeight = 0;
+    for (int i = 0; i < n; ++i) {
+        if (x[i]) {
+            totalWeight += w[i];
+        }
+    }
+    cout << totalWeight << "\n";
+    cout << "Profitul total: ";
+    int totalProfit = 0;
+    for (int i = 0; i < n; ++i) {
+        if (x[i]) {
+            totalProfit += p[i];
+        }
+    }
+    cout << totalProfit << "\n";
+    cout<<"\033[32m";
+    cout<<"==========================================================================================\n"<<"\033[0m";
 
     return 0;
 }
