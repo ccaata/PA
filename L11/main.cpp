@@ -4,64 +4,57 @@
 
 using namespace std;
 
-struct Graf{
-    int n;
-    vector<int> np; //numar predecesori
-    vector<vector<int>> a;
-};
+void sortareTopologicaBFS(int n, const vector<vector<int>>& adj) {
+    vector<int> inDegree(n, 0);   
+    queue<int> C;             
+    vector<int> L;           
 
-
-vector<int> SortareTopologica (Graf D){
-    queue<int> C;
-    vector<int> sorted; // vectorul cu nodurile sortate
-
-    int i;
-    for (i = 0; i < D.n; ++i){
-        if (D.np[i] == 0)
-            C.push(i);
+    for (int u = 0; u < n; ++u) {
+        for (int v : adj[u]) {
+            inDegree[v]++;
+        }
     }
 
-    for (i = 0; i < D.n; ++i){
-        if (C.empty() == 1){
+    for (int u = 0; u < n; ++u) {
+        if (inDegree[u] == 0) {
+            C.push(u);
+        }
+    }
+
+    for (int k = 0; k < n; ++k) {
+        if (C.empty()) {
             cout << "Graful contine cicluri\n";
+            return;
         }
 
-        int u = C.front();
-        C.pop();
-        sorted.push_back(u);
+        int u = C.front(); C.pop();
+        L.push_back(u);
 
-        //cautam vecinii
-        int j;
-        for (j = 0; j < D.a[u].size(); j++){
-            int v = D.a[u][j];
-            D.np[v]--;
-            if (D.np[v] == 0)
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            if (inDegree[v] == 0) {
                 C.push(v);
+            }
         }
     }
-    return sorted;
+
+    cout << "Sortarea topologica: ";
+    for (int v : L) {
+        cout << v << " ";
+    }
+    cout << endl;
 }
 
+int main() {
+    int n = 6;
+    vector<vector<int>> adj(n);
 
+    adj[5] = {0, 2};
+    adj[4] = {0, 1};
+    adj[2] = {3};
+    adj[3] = {1};
 
-int main(){
+    sortareTopologicaBFS(n, adj);
 
-    Graf D;
-    D.n = 6;
-    D.a = {
-        {1, 3},
-        {2},
-        {3, 4},
-        {4},
-        {},
-        {}
-    };
-    D.np = {0, 1, 1, 2, 2, 0};
-
-    vector <int> sorted;
-    sorted = SortareTopologica(D);
-
-    for (int i = 0; i < sorted.size(); ++i){
-        cout << char ('A' + sorted[i]) << ' ';
-    }
+    return 0;
 }
